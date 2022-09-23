@@ -22,6 +22,13 @@ module ActiveModel
         type 'messages'
       end
 
+      class MessagesSerializerWithCustomKey < ActiveModel::Serializer
+        type 'messages'
+        def json_key
+          "custom_key"
+        end
+      end
+
       class NonTypeSerializer < ActiveModel::Serializer; end
 
       def setup
@@ -131,6 +138,12 @@ module ActiveModel
         resource = []
         serializer = collection_serializer.new(resource, serializer: MessagesSerializer)
         assert_equal 'messages', serializer.json_key
+      end
+
+      def test_json_key_with_empty_resources_with_serializer_and_custom_json_key
+        resource = []
+        serializer = collection_serializer.new(resource, serializer: MessagesSerializerWithCustomKey)
+        assert_equal 'custom_key', serializer.json_key
       end
 
       def test_json_key_with_root
